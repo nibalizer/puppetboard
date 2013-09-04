@@ -1,11 +1,13 @@
 from __future__ import unicode_literals
 from __future__ import absolute_import
 
-import os
-import logging
 import collections
+import datetime
+import logging
+import os
 import urllib
 
+import pytz
 from flask import (
     Flask, render_template, abort, url_for,
     Response, stream_with_context,
@@ -103,6 +105,29 @@ def nodes():
     """
     return Response(stream_with_context(stream_template('nodes.html',
         nodes=yield_or_stop(puppetdb.nodes()))))
+
+@app.route('/compliance')
+def compliance():
+    """Lie to the user about whats working
+
+    """
+
+    nodes=yield_or_stop(puppetdb.nodes())
+    right_now = datetime.datetime.utcnow().replace(tzinfo = pytz.utc)
+    comply = []
+    not_comply = []
+    for node in nodes:
+      print "node: %s" % node.report_timestamp
+      print "now: %s" % right_now
+      if (right_now - node.report_timestamp).seconds > 10000:
+        not_comply.append(node)
+      else:
+        comply.append(node)
+
+    print "num comply %s" % len(comply)
+    print "num not comply %s" % len(not_comply)
+
+    return render_template('compliance.html', comply=comply, not_comply=not_comply)
 
 @app.route('/node/<node_name>')
 def node(node_name):

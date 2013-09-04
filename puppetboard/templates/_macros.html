@@ -132,3 +132,107 @@
   </tbody>
 </table>
 {%- endmacro %}
+
+{% macro compliance_graph(comply, not_comply, autofocus=False, condensed=False, show_node=False, margin_top=20, margin_bottom=20) -%}
+<script src="{{url_for('static', filename='js/Chart.js')}}"></script>
+<canvas id="complianceChart" width="400" height="400"></canvas>
+<script type="text/javascript">
+  var colors = [ "#F38630", "#E0E4CC", "#69D2E7", "#D11151", "#787BE3", "#B59370", "#B30202" ];
+  var len_colors = colors.length;
+  var comply_data = [
+{% for node in comply %}
+    {
+    name: "{{ node.name }}",
+    catalog_timestamp: "{{ node.catalog_timestamp }}",
+    report_timestamp: "{{ node.report_timestamp }}"
+    },
+{% endfor %}
+    {
+    value: 0,
+    }
+  ]
+  var not_comply_data = [
+{% for node in not_comply %}
+    {
+    name: "{{ node.name }}",
+    catalog_timestamp: "{{ node.catalog_timestamp }}",
+    report_timestamp: "{{ node.report_timestamp }}"
+    },
+{% endfor %}
+    {
+    value: 0,
+    }
+  ]
+
+  var data = [
+    {
+      label: "Success",
+      color: "#067D00",
+      value: (comply_data.length - 1)
+    },
+    {
+      label: "Failure",
+      color: "#A60000",
+      value: (not_comply_data.length - 1)
+    }
+  ]
+  var ctx = document.getElementById("complianceChart").getContext("2d");
+  new Chart(ctx).Pie(data);
+</script>
+{%- endmacro %}
+{% macro compliance_graph_bar(comply, not_comply, autofocus=False, condensed=False, show_node=False, margin_top=20, margin_bottom=20) -%}
+<script src="{{url_for('static', filename='js/Chart.js')}}"></script>
+<canvas id="complianceChart_bar" width="400" height="400"></canvas>
+<script type="text/javascript">
+  var colors = [ "#F38630", "#E0E4CC", "#69D2E7", "#D11151", "#787BE3", "#B59370", "#B30202" ];
+  var len_colors = colors.length;
+  var comply_data = [
+{% for node in comply %}
+    {
+    name: "{{ node.name }}",
+    catalog_timestamp: "{{ node.catalog_timestamp }}",
+    report_timestamp: "{{ node.report_timestamp }}"
+    },
+{% endfor %}
+    {
+    value: 0,
+    }
+  ]
+  var not_comply_data = [
+{% for node in not_comply %}
+    {
+    name: "{{ node.name }}",
+    catalog_timestamp: "{{ node.catalog_timestamp }}",
+    report_timestamp: "{{ node.report_timestamp }}"
+    },
+{% endfor %}
+    {
+    value: 0,
+    }
+  ]
+
+//  var data = [
+//    {
+//      label: "Success",
+//      color: "#067D00",
+//      value: (comply_data.length - 1)
+//    },
+//    {
+//      label: "Failure",
+//      color: "#A60000",
+//      value: (not_comply_data.length - 1)
+//    }
+  var data = {
+      labels : ["Success","Failure"],
+              datasets : [
+                  {
+                    fillColor : "rgba(220,220,220,0.5)",
+                    strokeColor : "rgba(220,220,220,1)",
+                    data : [(comply_data.length -1 ), (not_comply_data.length - 1)]
+                  }
+              ]
+  }
+    var ctx = document.getElementById("complianceChart_bar").getContext("2d");
+  new Chart(ctx).Bar(data);
+</script>
+{%- endmacro %}
