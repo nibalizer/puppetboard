@@ -11,3 +11,14 @@ ENABLE_QUERY = True
 LOCALISE_TIMESTAMP = True
 LOGLEVEL = 'info'
 REPORTS_COUNT = 10
+GRAPH_FACTS = ['architecture',
+               'domain',
+               'lsbcodename',
+               'lsbdistcodename',
+               'lsbdistid',
+               'lsbdistrelease',
+               'lsbmajdistrelease',
+               'netmask',
+               'osfamily',
+               'puppetversion',
+               'processorcount']
